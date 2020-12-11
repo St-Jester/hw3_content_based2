@@ -1,4 +1,3 @@
-
 import numpy as np
 import cv2 as cv
 import sys
@@ -22,7 +21,7 @@ def get_frequencies(image, channel_value, bins=256, ):
 
 
 # this is custom implementation
-def get_color_hist_rgb(image):
+def get_color_hist_rgb(image, plot=False):
     colors = ("r", "g", "b")
     channel_ids = (0, 1, 2)
     res_all = np.zeros((3, 256))
@@ -30,7 +29,8 @@ def get_color_hist_rgb(image):
         # get 1 channel
         res = get_frequencies(image, channel_id)
         res_all[channel_id] = res
-        plt.plot(res, color=c)
+        if plot:
+            plt.plot(res, color=c)
 
     return res_all
 
@@ -47,24 +47,26 @@ def get_color_histogram_numpy(image):
         histogram, bin_edges = np.histogram(image[:, :, channel_id], bins=256, range=(0, 256))
         plt.plot(bin_edges[0:-1], histogram, color=c)
 
+
 # 2. Write a program to measure the L 2 distance between color histograms of two images.
 def distance(v1, v2):
     return np.sqrt(np.sum(np.square(v1 - v2)))
+
 
 # 1. Write a program to extract the color histogram of each of the 2,000 images. Choose the
 # parameters required with justifications. Implement your own histogram code and compare its
 # results with open-source API like OpenCV and numpy.
 
-def read_and_plot(img_name, plot=False):
+def read_and_plot(img_name, plot=False, test=False):
     im = cv.imread(img_name)
 
-    if (plot):
+    if plot:
         plt.figure(1)
         plt.title('custom plot')
 
     histogram_vector = get_color_hist_rgb(im)
 
-    if (plot):
+    if test:
         plt.figure(2)
         plt.title('numpy plot')
 
@@ -74,12 +76,15 @@ def read_and_plot(img_name, plot=False):
     return histogram_vector
 
 
-v1 = read_and_plot('ukbench00000.jpg', True)
-v1_2 = read_and_plot('ukbench00001.jpg', True)
-v2 = read_and_plot('ukbench00009.jpg')
+# 3.
+# Use 5 images shown above (ukbench00004.jpg; ukbench00040.jpg; ukbench00060.jpg;
+# ukbench00588.jpg; ukbench01562.jpg) as queries. For each query image, find 10 best matches
+# from the 2,000 images based on the color histogram similarity.
+# Plot the query image and the 10 returned matches (use icons of reduced resolution to save
+# space).
+# == make matrix of distances
 
-print(distance(v1, v2))
-print(distance(v1, v1_2))
-
-archive = zipfile.ZipFile('Homework1.zip', 'r')
-imgdata = archive.read('img_01.png')
+# print(distance(v1, v2))
+# print(distance(v1, v1_2))
+read_and_plot('../Homework1/ukbench00004.jpg')
+image_quieries = ['ukbench00004.jpg', 'ukbench00040.jpg', 'ukbench00060.jpg', 'ukbench00588.jpg', 'ukbench01562.jpg']
